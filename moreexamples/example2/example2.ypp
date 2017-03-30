@@ -1,0 +1,38 @@
+%{
+    #include "example2.hpp"
+
+    #include<iostream>
+    using namespace std;
+    
+    int yylex();
+    void yyerror(char const*);
+%}
+
+%token NUM CHAR
+%left '<'
+%right '>'
+
+%%
+
+prog : 		chars '\n'		{cout << $$.c << endl; return 0;}
+		| nums '\n'		{cout << $$.i << endl; return 0;}
+;
+
+chars :		CHAR			{$$.c = $1.c;}
+		| chars '<' chars	{$$.c = min($1.c, $3.c);}
+		| chars '>' chars	{$$.c = max($1.c, $3.c);}
+;
+
+nums :		NUM			{$$.i = $1.i;}
+		| nums '<' nums		{$$.i = min($1.i, $3.i);}
+		| nums '>' nums		{$$.i = max($1.i, $3.i);}
+;
+
+%%
+
+int main()
+{
+    return yyparse();
+}
+
+void yyerror(char const* s){}

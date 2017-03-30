@@ -1,0 +1,33 @@
+%{
+    #include "example1.hpp"
+
+    #include<iostream>
+    using namespace std;
+    
+    int yylex();
+    void yyerror(char const*);
+%}
+
+%token FALSE TRUE
+%left OR
+%left AND
+
+%%
+
+prog : 		bool '\n'		{cout << ($1 ? "true" : "false") << endl; return 0;}
+;
+
+bool :		FALSE			{$$ = false;}
+		| TRUE			{$$ = true;}
+		| bool AND bool		{$$ = $1 && $3;}
+		| bool OR bool		{$$ = $1 || $3;}
+;
+
+%%
+
+int main()
+{
+    return yyparse();
+}
+
+void yyerror(char const* s){}
