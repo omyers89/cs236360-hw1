@@ -32,7 +32,7 @@ E               ([Ee][+-]?{digit}+)
 <STRING>\\r    { *s++ = '\r'; }
 <STRING>\\n     { *s++ = '\n'; }
 <STRING>\\t     { *s++ = '\t'; }
-<STRING>\\[^bfrntu]     { printErr("undefined escape sequence") }
+<STRING>\\[^bfrntu]     { printErr("undefined escape sequence"); }
 
 <STRING>\"      { 
                   *s = 0;
