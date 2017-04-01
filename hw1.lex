@@ -13,6 +13,8 @@ char *s;
 %}
 
 %x STRING
+%x LN_COMM
+%x BK_COMM
 %option yylineno
 %option noyywrap
 
@@ -31,28 +33,49 @@ whitespace		([\t\n ])
 <STRING>\\r    { *s++ = '\r'; }
 <STRING>\\n     { *s++ = '\n'; }
 <STRING>\\t     { *s++ = '\t'; }
-
+<STRING>\\u     { *s++ = '\u'; }
 <STRING>\"      { 
                   *s = 0;
                   BEGIN 0;
-                  printf("found '%s'\n", buf);
+                  printf("%d %s %s\n", yylineno, "STRING", buf);
                 }
 <STRING>\n      { printf("invalid string"); exit(1); }
 <STRING>.       { *s++ = *yytext; }
 
+//             { BEGIN LN_COMM; s = buf; }
+<STRING>\n      { 
+                  *s = 0;
+                  BEGIN 0;
+                  printf("%d %s %s\n", yylineno, "LN_COMMENT", buf);
+                }
+<LN_COMM>.    { *s++ = *yytext; }
 
-
+/\*            { BEGIN BK_COMMENT; s = buf; }
+<STRING>\*/      { 
+                  *s = 0;
+                  BEGIN 0;
+                  printf("%d %s %s\n", yylineno, "BK_COMMENT", buf);
+                }
+<LN_COMM>.    { *s++ = *yytext; }
 
 
 \{                           showToken("OBJ_START");
 \}                           showToken("OBJ_END");
+[                           showToken("ARR_START");
+]                           showToken("ARR_END");
 :                           showToken("COLON");
 ,                           showToken("COMMA");
-{digit}+          			showToken("number");
-{letter}+					showToken("word");
-{letter}+@{letter}+\.com		showToken("email address");
+{digit}+          			showToken("NUMBER");
 {whitespace}				;
-.		printf("Lex doesn't know what that is!\n");
+true                showToken("TRUE");
+false                showToken("FALSE");
+null                showToken("NULL");
+
+//
+
+
+
+.		printf("Lex doesn't know what that is!\n %s", yytext);
 
 %%
 
@@ -68,7 +91,8 @@ void showString()
        printf("improperly terminated string");
     else
         yylval[yyleng-2] = 0;
-    printf("found '%s'\n", yylval);
+    printf("%d %s %s\n", yylineno, name, yylval);
+    //printf("found '%s'\n", yylval);
 }
 
 /* \"[^"\n]*["\n]          showString(); */
