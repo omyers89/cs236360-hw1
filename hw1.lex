@@ -5,9 +5,14 @@
 #include <string.h>
 char *yylval;
 void showToken(char *);
+void showString();
+
+char buf[100];
+char *s;
 
 %}
 
+%x STRING
 %option yylineno
 %option noyywrap
 
@@ -17,7 +22,21 @@ whitespace		([\t\n ])
 
 
 %%
-\"[^"\n]*["\n]          showString();
+\"              { BEGIN STRING; s = buf; }
+<STRING>\\n     { *s++ = '\n'; }
+<STRING>\\t     { *s++ = '\t'; }
+<STRING>\\\"    { *s++ = '\"'; }
+<STRING>\"      { 
+                  *s = 0;
+                  BEGIN 0;
+                  printf("found '%s'\n", buf);
+                }
+<STRING>\n      { printf("invalid string"); exit(1); }
+<STRING>.       { *s++ = *yytext; }
+
+
+
+
 
 {                           showToken("OBJ_START");
 }                           showToken("OBJ_END");
@@ -41,8 +60,10 @@ void showString()
 {
     yylval = strdup(yytext+1);
     if (yylval[yyleng-2] != '"')
-        warning("improperly terminated string");
+        printf("improperly terminated string");
     else
         yylval[yyleng-2] = 0;
     printf("found '%s'\n", yylval);
 }
+
+/* \"[^"\n]*["\n]          showString(); */
