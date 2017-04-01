@@ -27,7 +27,6 @@ whitespace		([\t\n ])
 \"              { BEGIN STRING; s = buf; }
 <STRING>\\\"    { *s++ = '\"'; }
 <STRING>\\\     { *s++ = '\\'; }
-<STRING>\/     { *s++ = '\/'; }
 <STRING>\\b    { *s++ = '\b'; }
 <STRING>\\f    { *s++ = '\f'; }
 <STRING>\\r    { *s++ = '\r'; }
