@@ -44,12 +44,13 @@ whitespace		([\t\n ])
 <LN_COMM>\n      { 
                   *s = 0;
                   BEGIN 0;
-                  printf("%d %s %s\n", yylineno, "LN_COMMENT", buf);
+                  printf("%d %s %s\n", yylineno-1, "LN_COMMENT", buf);
                 }
 <LN_COMM>.    { *s++ = *yytext; }
 
-\/\*            { BEGIN BK_COMM; s = buf; }
+\/\*            { BEGIN BK_COMM; s = buf; *s++ = *yytext;}
 <BK_COMM>\*\/      { 
+                    *s++ = *yytext;
                   *s = 0;
                   BEGIN 0;
                   printf("%d %s %s\n", yylineno, "BK_COMMENT", buf);
@@ -64,6 +65,9 @@ whitespace		([\t\n ])
 :                           showToken("COLON");
 ,                           showToken("COMMA");
 {digit}+          			showToken("NUMBER");
+{digit}+.{digit}+          			showToken("NUMBER");
+{digit}+.{digit}+[+-]?[eE]{digit}+			showToken("NUMBER");
+{digit}+[+-]?[eE]{digit}+          			showToken("NUMBER");
 {whitespace}				;
 true                showToken("TRUE");
 false                showToken("FALSE");
