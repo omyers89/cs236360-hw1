@@ -23,9 +23,16 @@ whitespace		([\t\n ])
 
 %%
 \"              { BEGIN STRING; s = buf; }
+<STRING>\\\"    { *s++ = '\"'; }
+<STRING>\\\     { *s++ = '\\'; }
+<STRING>\\/     { *s++ = '\/'; }
+<STRING>\\/     { *s++ = '\/'; }
+<STRING>\\b    { *s++ = '\b'; }
+<STRING>\\f    { *s++ = '\f'; }
+<STRING>\\r    { *s++ = '\r'; }
 <STRING>\\n     { *s++ = '\n'; }
 <STRING>\\t     { *s++ = '\t'; }
-<STRING>\\\"    { *s++ = '\"'; }
+
 <STRING>\"      { 
                   *s = 0;
                   BEGIN 0;
@@ -38,9 +45,8 @@ whitespace		([\t\n ])
 
 
 
-{                           showToken("OBJ_START");
-}                           showToken("OBJ_END");
-"..."                       showToken("STRING");
+\{                           showToken("OBJ_START");
+\}                           showToken("OBJ_END");
 :                           showToken("COLON");
 ,                           showToken("COMMA");
 {digit}+          			showToken("number");
