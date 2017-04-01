@@ -33,7 +33,6 @@ whitespace		([\t\n ])
 <STRING>\\r    { *s++ = '\r'; }
 <STRING>\\n     { *s++ = '\n'; }
 <STRING>\\t     { *s++ = '\t'; }
-<STRING>\\u     { *s++ = '\u'; }
 <STRING>\"      { 
                   *s = 0;
                   BEGIN 0;
@@ -42,7 +41,7 @@ whitespace		([\t\n ])
 <STRING>\n      { printf("invalid string"); exit(1); }
 <STRING>.       { *s++ = *yytext; }
 
-\/\/             { BEGIN LN_COMM; s = buf; }
+//             { BEGIN LN_COMM; s = buf; }
 <LN_COMM>\n      { 
                   *s = 0;
                   BEGIN 0;
@@ -50,8 +49,8 @@ whitespace		([\t\n ])
                 }
 <LN_COMM>.    { *s++ = *yytext; }
 
-\/\*            { BEGIN BK_COMM; s = buf; }
-<BK_COMM>\*\/      { 
+/\*            { BEGIN BK_COMM; s = buf; }
+<BK_COMM>\*/      { 
                   *s = 0;
                   BEGIN 0;
                   printf("%d %s %s\n", yylineno, "BK_COMMENT", buf);
@@ -86,7 +85,7 @@ void showString()
         printf("improperly terminated string");
     else
         yylval[yyleng-2] = 0;
-    printf("%d %s %s\n", yylineno, name, yylval);
+    printf("%d %s %s\n", yylineno, "STRING", yylval);
     //printf("found '%s'\n", yylval);
 }
 
