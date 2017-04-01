@@ -6,7 +6,7 @@
 char *yylval;
 void showToken(char *);
 void showString();
-
+void printErr(char * name);
 char buf[100];
 char *s;
 
@@ -21,7 +21,7 @@ char *s;
 digit   		([0-9])
 letter  		([a-zA-Z])
 whitespace		([\t\n ])
-
+E               ([Ee][+-]?{digit}+)
 
 %%
 \"              { BEGIN STRING; s = buf; }
@@ -32,12 +32,14 @@ whitespace		([\t\n ])
 <STRING>\\r    { *s++ = '\r'; }
 <STRING>\\n     { *s++ = '\n'; }
 <STRING>\\t     { *s++ = '\t'; }
+<STRING>\\[^bfrntu]     { printErr("undefined escape sequence") }
+
 <STRING>\"      { 
                   *s = 0;
                   BEGIN 0;
                   printf("%d %s %s\n", yylineno, "STRING", buf);
                 }
-<STRING>\n      { printf("invalid string"); exit(1); }
+<STRING>\n      { printf("Error unclosed string\n"); exit(0);}
 <STRING>.       { *s++ = *yytext; }
 
 \/\/             { BEGIN LN_COMM; s = buf; }
@@ -57,6 +59,8 @@ whitespace		([\t\n ])
                   BEGIN 0;
                   printf("%d %s %s\n", yylineno, "BK_COMMENT", buf);
                 }
+
+<BK_COMM>"EOF"    { printf("Error unclosed block comment\n"); exit(0);}
 <BK_COMM>.    { *s++ = *yytext; }
 
 
@@ -66,16 +70,14 @@ whitespace		([\t\n ])
 \]                           showToken("ARR_END");
 :                           showToken("COLON");
 ,                           showToken("COMMA");
-{digit}+.{digit}+[+-]?[eE]{digit}+			showToken("NUMBER");
-{digit}+[+-]?[eE]{digit}+          			showToken("NUMBER");
-{digit}+.{digit}+          			showToken("NUMBER");
-{digit}+          			showToken("NUMBER");
+{digit}+.{digit}+{E}?		showToken("NUMBER");
+{digit}+{E}?          			showToken("NUMBER");
 
 {whitespace}				;
 true                showToken("TRUE");
 false                showToken("FALSE");
 null                showToken("NULL");
-.		printf("Lex doesn't know what that is!\n %s", yytext);
+.		            printErr("");
 
 %%
 
@@ -84,8 +86,10 @@ void showToken(char * name)
         printf("%d %s %s\n", yylineno, name, yytext);
 }
 
+//not used
 void showString()
 {
+    
     yylval = strdup(yytext+1);
     if (yylval[yyleng-2] != '"')
        printf("improperly terminated string");
@@ -95,5 +99,15 @@ void showString()
     //printf("found '%s'\n", yylval);
 }
 
+void printErr(char * name){
+    printf("Error %s %s\n",name, yytext[0]);
+    exit(0);
+    }
+
+
+
 /* \"[^"\n]*["\n]          showString(); */
 /* doing nothing */
+/*{digit}+.{digit}+          			showToken("NUMBER");
+{digit}+          			showToken("NUMBER");
+*/
