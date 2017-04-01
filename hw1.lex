@@ -6,7 +6,8 @@
 char *yylval;
 void showToken(char *);
 void showString();
-void printErr(char * name);
+void printErr();
+void printEscapeErr(char * name);
 char buf[100];
 char *s;
 
@@ -32,7 +33,7 @@ E               ([Ee][+-]?{digit}+)
 <STRING>\\r    { *s++ = '\r'; }
 <STRING>\\n     { *s++ = '\n'; }
 <STRING>\\t     { *s++ = '\t'; }
-<STRING>\\[^bfrntu]     { printErr("undefined escape sequence"); }
+<STRING>\\[^bfrntu]     { printEscapeErr("undefined escape sequence"); }
 
 <STRING>\"      { 
                   *s = 0;
@@ -77,7 +78,7 @@ E               ([Ee][+-]?{digit}+)
 true                showToken("TRUE");
 false                showToken("FALSE");
 null                showToken("NULL");
-.		            printErr("");
+.		            printErr();
 
 %%
 
@@ -99,8 +100,13 @@ void showString()
     //printf("found '%s'\n", yylval);
 }
 
-void printErr(char * name){
-    printf("Error %s %s\n",name, yytext[0]);
+void printEscapeErr(char * name){
+    printf("Error %s %s\n",name, yytext[1]);
+    exit(0);
+    }
+
+void printErr(){
+    printf("Error %s\n", yytext[0]);
     exit(0);
     }
 
