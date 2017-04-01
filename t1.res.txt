@@ -1,0 +1,31 @@
+1 OBJ_START {
+2 STRING student
+2 COLON :
+2 STRING Steve
+2 COMMA ,
+3 STRING assignments
+3 COLON :
+3 ARR_START [
+4 BK_COMMENT /* list of grades per assignment */
+5 OBJ_START {
+5 STRING assignment
+5 COLON :
+5 STRING hw3
+5 COMMA ,
+5 STRING grade
+5 COLON :
+5 NUMBER 100
+5 OBJ_END }
+5 COMMA ,
+6 OBJ_START {
+6 STRING assignment
+6 COLON :
+6 STRING hw1
+6 COMMA ,
+6 STRING grade
+6 COLON :
+6 NUMBER 80
+6 OBJ_END }
+7 ARR_END ]
+8 OBJ_END }
+9 EOF 

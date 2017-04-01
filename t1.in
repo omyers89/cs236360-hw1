@@ -1,0 +1,8 @@
+{
+	"student" : "Steve",
+	"assignments" : [
+	  /* list of grades per assignment */
+	  { "assignment" : "hw3", "grade" : 100 },
+	  { "assignment" : "hw1", "grade" : 80 }
+	]
+}
