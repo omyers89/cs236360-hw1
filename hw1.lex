@@ -48,9 +48,11 @@ whitespace		([\t\n ])
                 }
 <LN_COMM>.    { *s++ = *yytext; }
 
-\/\*            { BEGIN BK_COMM; s = buf; *s++ = *yytext;}
+\/\*            { BEGIN BK_COMM; s = buf; *s++ = '/'; *s++='*';}
 <BK_COMM>\*\/      { 
-                    *s++ = *yytext;
+                    
+                    *s++='*';
+                  *s++ = '/';
                   *s = 0;
                   BEGIN 0;
                   printf("%d %s %s\n", yylineno, "BK_COMMENT", buf);
@@ -64,10 +66,11 @@ whitespace		([\t\n ])
 \]                           showToken("ARR_END");
 :                           showToken("COLON");
 ,                           showToken("COMMA");
-{digit}+          			showToken("NUMBER");
-{digit}+.{digit}+          			showToken("NUMBER");
 {digit}+.{digit}+[+-]?[eE]{digit}+			showToken("NUMBER");
 {digit}+[+-]?[eE]{digit}+          			showToken("NUMBER");
+{digit}+.{digit}+          			showToken("NUMBER");
+{digit}+          			showToken("NUMBER");
+
 {whitespace}				;
 true                showToken("TRUE");
 false                showToken("FALSE");
@@ -93,3 +96,4 @@ void showString()
 }
 
 /* \"[^"\n]*["\n]          showString(); */
+/* doing nothing */
