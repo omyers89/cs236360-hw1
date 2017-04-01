@@ -2,6 +2,8 @@
 
 /* Declarations section */
 #include <stdio.h>
+#include <string.h>
+char *yylval;
 void showToken(char *);
 
 %}
@@ -13,7 +15,10 @@ digit   		([0-9])
 letter  		([a-zA-Z])
 whitespace		([\t\n ])
 
+
 %%
+\"[^"\n]*["\n]          showString();
+
 {                           showToken("OBJ_START");
 }                           showToken("OBJ_END");
 "..."                       showToken("STRING");
@@ -32,3 +37,12 @@ void showToken(char * name)
         printf("%d %s %s\n", yylineno, name, yytext);
 }
 
+void showString()
+{
+    yylval = strdup(yytext+1);
+    if (yylval[yyleng-2] != '"')
+        warning("improperly terminated string");
+    else
+        yylval[yyleng-2] = 0;
+    printf("found '%s'\n", yylval);
+}
