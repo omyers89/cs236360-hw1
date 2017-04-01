@@ -5,7 +5,7 @@
 #include <string.h>
 char *yylval;
 void showToken(char *);
-
+void showString();
 %}
 
 %option yylineno
@@ -41,7 +41,7 @@ void showString()
 {
     yylval = strdup(yytext+1);
     if (yylval[yyleng-2] != '"')
-        warning("improperly terminated string");
+       printf("improperly terminated string");
     else
         yylval[yyleng-2] = 0;
     printf("found '%s'\n", yylval);
