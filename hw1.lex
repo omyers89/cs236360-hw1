@@ -50,19 +50,19 @@ whitespace		([\t\n ])
                 }
 <LN_COMM>.    { *s++ = *yytext; }
 
-\/\*            { BEGIN BK_COMMENT; s = buf; }
-<BK_COMMENT>\*\/      { 
+\/\*            { BEGIN BK_COMM; s = buf; }
+<BK_COMM>\*\/      { 
                   *s = 0;
                   BEGIN 0;
                   printf("%d %s %s\n", yylineno, "BK_COMMENT", buf);
                 }
-<BK_COMMENT>.    { *s++ = *yytext; }
+<BK_COMM>.    { *s++ = *yytext; }
 
 
 \{                           showToken("OBJ_START");
 \}                           showToken("OBJ_END");
-[                           showToken("ARR_START");
-]                           showToken("ARR_END");
+\[                           showToken("ARR_START");
+\]                           showToken("ARR_END");
 :                           showToken("COLON");
 ,                           showToken("COMMA");
 {digit}+          			showToken("NUMBER");
@@ -70,11 +70,6 @@ whitespace		([\t\n ])
 true                showToken("TRUE");
 false                showToken("FALSE");
 null                showToken("NULL");
-
-//
-
-
-
 .		printf("Lex doesn't know what that is!\n %s", yytext);
 
 %%
