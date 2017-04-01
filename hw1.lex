@@ -42,21 +42,21 @@ whitespace		([\t\n ])
 <STRING>\n      { printf("invalid string"); exit(1); }
 <STRING>.       { *s++ = *yytext; }
 
-//             { BEGIN LN_COMM; s = buf; }
-<STRING>\n      { 
+\/\/             { BEGIN LN_COMM; s = buf; }
+<LN_COMM>\n      { 
                   *s = 0;
                   BEGIN 0;
                   printf("%d %s %s\n", yylineno, "LN_COMMENT", buf);
                 }
 <LN_COMM>.    { *s++ = *yytext; }
 
-/\*            { BEGIN BK_COMMENT; s = buf; }
-<STRING>\*/      { 
+\/\*            { BEGIN BK_COMMENT; s = buf; }
+<BK_COMMENT>\*\/      { 
                   *s = 0;
                   BEGIN 0;
                   printf("%d %s %s\n", yylineno, "BK_COMMENT", buf);
                 }
-<LN_COMM>.    { *s++ = *yytext; }
+<BK_COMMENT>.    { *s++ = *yytext; }
 
 
 \{                           showToken("OBJ_START");
