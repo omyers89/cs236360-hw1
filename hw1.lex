@@ -27,7 +27,6 @@ whitespace		([\t\n ])
 \"              { BEGIN STRING; s = buf; }
 <STRING>\\\"    { *s++ = '\"'; }
 <STRING>\\\     { *s++ = '\\'; }
-<STRING>\/     { *s++ = '\/'; }
 <STRING>\\b    { *s++ = '\b'; }
 <STRING>\\f    { *s++ = '\f'; }
 <STRING>\\r    { *s++ = '\r'; }
@@ -82,7 +81,7 @@ void showString()
 {
     yylval = strdup(yytext+1);
     if (yylval[yyleng-2] != '"')
-        printf("improperly terminated string");
+       printf("improperly terminated string");
     else
         yylval[yyleng-2] = 0;
     printf("%d %s %s\n", yylineno, "STRING", yylval);
