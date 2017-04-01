@@ -1,5 +1,0 @@
-1 OBJ_START {
-2 STRING num
-2 COLON :
-2 NUMBER 6
-Error .
