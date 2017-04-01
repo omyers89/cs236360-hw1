@@ -101,12 +101,12 @@ void showString()
 }
 
 void printEscapeErr(char * name){
-    printf("Error %s %s\n",name, yytext[1]);
+    printf("Error %s %s\n",name, yytext+1);
     exit(0);
     }
 
 void printErr(){
-    printf("Error %s\n", yytext[0]);
+    printf("Error %s\n", yytext);
     exit(0);
     }
 
