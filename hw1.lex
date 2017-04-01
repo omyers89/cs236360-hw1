@@ -48,10 +48,11 @@ whitespace		([\t\n ])
                 }
 <LN_COMM>.    { *s++ = *yytext; }
 
-\/\*            { BEGIN BK_COMM; s = buf; *s++ = *yytext; s++;}
+\/\*            { BEGIN BK_COMM; s = buf; *s++ = '/'; *s++='*';}
 <BK_COMM>\*\/      { 
-                    *s++ = *yytext;
-                    s++;
+                    
+                    *s++='*';
+                  *s++ = '/';
                   *s = 0;
                   BEGIN 0;
                   printf("%d %s %s\n", yylineno, "BK_COMMENT", buf);
