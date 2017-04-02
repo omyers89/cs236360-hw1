@@ -8,6 +8,7 @@ void showToken(char *);
 void showString();
 void printErr();
 void printEscapeErr(char * name);
+char* handleAsciiChar();
 char buf[100];
 char *s;
 
@@ -23,17 +24,26 @@ digit   		([0-9])
 letter  		([a-zA-Z])
 whitespace		([\t\n ])
 E               ([Ee][+-]?{digit}+)
+asciiTrailer    ({digit}{digit}{digit}{digit})
 
 %%
-\"              { BEGIN STRING; s = buf; }
-<STRING>\\\"    { *s++ = '\"'; }
-<STRING>\\\     { *s++ = '\\'; }
-<STRING>\\b    { *s++ = '\b'; }
-<STRING>\\f    { *s++ = '\f'; }
-<STRING>\\r    { *s++ = '\r'; }
-<STRING>\\n     { *s++ = '\n'; }
-<STRING>\\t     { *s++ = '\t'; }
-<STRING>\\[^bfrntu]     { printEscapeErr("undefined escape sequence"); }
+\"                          { BEGIN STRING; s = buf; }
+<STRING>\\\"                 { *s++ = '\"'; }
+<STRING>\\\                  { *s++ = '\\'; }
+<STRING>\\b                  { *s++ = '\b'; }
+<STRING>\\f                  { *s++ = '\f'; }
+<STRING>\\r                  { *s++ = '\r'; }
+<STRING>\\n                  { *s++ = '\n'; }
+<STRING>\\t                   { *s++ = '\t'; }
+<STRING>\\u{asciiTrailer}     {
+                                char* res = handleAsciiChar();
+                                int i;
+                                printf("RES: %s\n", res);
+                                for(i=0;i<6;i++)
+                                    *s++ = res[i];
+                                free(res);
+                              }
+<STRING>\\[^bfrntu]     { printEscapeErr("Undefined escape sequence"); }
 
 <STRING>\"      { 
                   *s = 0;
@@ -103,12 +113,25 @@ void showString()
 void printEscapeErr(char * name){
     printf("Error %s %s\n",name, yytext+1);
     exit(0);
-    }
+}
 
 void printErr(){
     printf("Error %s\n", yytext);
     exit(0);
-    }
+}
+
+char* handleAsciiChar(){
+
+    char prefix = '#';
+    int num = (int)strtol(yytext+2, NULL, 16);
+    char * buffer = (char *) malloc(strlen(yytext));
+
+    sprintf(buffer,"%c",prefix);
+    sprintf(buffer + strlen(buffer),"%d",num);
+    sprintf(buffer + strlen(buffer),"%c",prefix);
+
+    return buffer;
+}
 
 
 
