@@ -8,7 +8,7 @@ void showToken(char *);
 void showString();
 void printErr();
 void printEscapeErr(char * name);
-char* handleAsciiChar();
+char* handleUnicode();
 char buf[100];
 char *s;
 
@@ -22,9 +22,10 @@ char *s;
 
 digit   		([0-9])
 letter  		([a-zA-Z])
+hexLetter       ([a-fA-F])
 whitespace		([\t\n ])
 E               ([Ee][+-]?{digit}+)
-asciiTrailer    ({digit}{digit}{digit}{digit})
+hexTrailer      ({digit}|{hexLetter})({digit}|{hexLetter})({digit}|{hexLetter})({digit}|{hexLetter})
 
 %%
 \"                          { BEGIN STRING; s = buf; }
@@ -35,11 +36,10 @@ asciiTrailer    ({digit}{digit}{digit}{digit})
 <STRING>\\r                  { *s++ = '\r'; }
 <STRING>\\n                  { *s++ = '\n'; }
 <STRING>\\t                   { *s++ = '\t'; }
-<STRING>\\u{asciiTrailer}     {
-                                char* res = handleAsciiChar();
+<STRING>\\u{hexTrailer}     {
+                                char* res = handleUnicode();
                                 int i;
-                                printf("RES: %s\n", res);
-                                for(i=0;i<6;i++)
+                                for(i=0;i<strlen(res);i++)
                                     *s++ = res[i];
                                 free(res);
                               }
@@ -122,7 +122,7 @@ void printErr(){
     exit(0);
 }
 
-char* handleAsciiChar(){
+char* handleUnicode(){
 
     char prefix = '#';
     int num = (int)strtol(yytext+2, NULL, 16);
