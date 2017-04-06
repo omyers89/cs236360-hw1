@@ -1,12 +1,5 @@
 {
-	// "This is an unclosed string with a number of legal escape characters."
-	// " \" \\ // \/ \b \f \n \r /* \t \uaBcDeqqq */ /* $$$
+	"This is an unclosed string with a number of legal escape characters."
+	" \" \\ // \/ \b \f \n \r /* \t \uaBcDeqqq */ /* $$$
 	
-	"closed string print quats and backslash"
-	" \" \\ " // \/ \b \f \n \r /* \t \uaBcDeqqq */ /* $$$
 	
-	"closed string print quats and backslash2"
-	" \" \\  // " \/ \b \f \n \r /* \t \uaBcDeqqq */ /* $$$
-	
-	"closed string print quats and backslash and slash"
-	" \" \\  //  \/ " \b \f \n \r /* \t \uaBcDeqqq */ /* $$$
