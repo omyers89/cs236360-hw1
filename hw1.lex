@@ -23,7 +23,7 @@ char *s;
 digit   		([0-9])
 letter  		([a-zA-Z])
 whitespace		([\t\n ])
-E               ([Ee][+-]?{digit}+)
+E               ([Ee]([+-]?){digit}+)
 asciiTrailer    ({digit}{digit}{digit}{digit})
 
 %%
@@ -43,7 +43,8 @@ asciiTrailer    ({digit}{digit}{digit}{digit})
                                     *s++ = res[i];
                                 free(res);
                               }
-<STRING>\\[^bfrntu]     { printEscapeErr("Undefined escape sequence"); }
+<STRING>\\\/                   { *s++ = '/'; }			  
+<STRING>\\[^bfrntu\\/]     { printEscapeErr("Undefined escape sequence"); }
 
 <STRING>\"      { 
                   *s = 0;
@@ -53,7 +54,7 @@ asciiTrailer    ({digit}{digit}{digit}{digit})
 <STRING>\n      { printf("Error unclosed string\n"); exit(0);}
 <STRING>.       { *s++ = *yytext; }
 
-\/\/             { BEGIN LN_COMM; s = buf; }
+\/\/             { BEGIN LN_COMM; s = buf; *s++ = '/'; *s++='/'; }
 <LN_COMM>\n      { 
                   *s = 0;
                   BEGIN 0;
@@ -72,6 +73,7 @@ asciiTrailer    ({digit}{digit}{digit}{digit})
                 }
 
 <BK_COMM>"EOF"    { printf("Error unclosed block comment\n"); exit(0);}
+<BK_COMM><<EOF>>    { printf("Error unclosed block comment\n"); exit(0);}
 <BK_COMM>.    { *s++ = *yytext; }
 
 
@@ -81,8 +83,11 @@ asciiTrailer    ({digit}{digit}{digit}{digit})
 \]                           showToken("ARR_END");
 :                           showToken("COLON");
 ,                           showToken("COMMA");
-{digit}+.{digit}+{E}?		showToken("NUMBER");
-{digit}+{E}?          			showToken("NUMBER");
+
+\-?{digit}+		showToken("NUMBER");
+\-?{digit}+{E}?          			showToken("NUMBER");
+\-?{digit}+.{digit}         			showToken("NUMBER");
+\-?{digit}+.{digit}+{E}?		showToken("NUMBER");
 
 
 {whitespace}				;
