@@ -98,19 +98,6 @@ void showToken(char * name)
         printf("%d %s %s\n", yylineno, name, yytext);
 }
 
-//not used
-void showString()
-{
-    
-    yylval = strdup(yytext+1);
-    if (yylval[yyleng-2] != '"')
-       printf("improperly terminated string");
-    else
-        yylval[yyleng-2] = 0;
-    printf("%d %s %s\n", yylineno, "STRING", yylval);
-    //printf("found '%s'\n", yylval);
-}
-
 void printEscapeErr(char * name){
     printf("Error %s %s\n",name, yytext+1);
     exit(0);
