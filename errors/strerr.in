@@ -1,0 +1,3 @@
+{
+	"This is an unclosed string with a number of legal escape characters."
+	" \" \\ // \/ \b \f \n \r /* \t \uaBcDeqqq */ /* $$$

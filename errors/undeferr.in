@@ -1,0 +1,4 @@
+{
+	"This is an unclosed string with a number of legal escape characters \n\t and two illegal ones in a block comment.\n\t The test should catch the undefined escape u."
+	" \" \\ \/ \b \f \n \r \t /* \u123 \q */ $$$
+}

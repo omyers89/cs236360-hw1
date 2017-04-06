@@ -1,0 +1,8 @@
+{
+	"Checks that in a line comment lex doesn't check for any other comments or strings"
+	// /* // *** $$$ " */ /*
+	"Checks that in a string lex doesn't check for comment characters"
+	"/* // *** $$$ */ /*"
+	"Next line is an unclosed block comment"
+	/* / *** $$$ //* " /* ////
+}

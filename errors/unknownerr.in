@@ -1,0 +1,19 @@
+{
+	"Checking all literals"
+	{}[]:,truefalsenull
+	"Checking escape characters and other string features"
+	"key" "value, or values" "\t escaped characters\n" "Another escaped \" char"
+	" \" \\ \/ \b \f \n \r \t \uaBcD $$ /* //"
+	"Checking comments"
+	//this is a comment
+	/*this is a comment
+	and it spans several lines*
+	/*dsfsadfsdf{ }* * / * /*:sad 0234.345
+	sdf
+	*/
+	"Checking legal numbers"
+	0 0.0 0.24601 6 4.7 120E-3 0.0e2 0.00e2 000.4
+	"Checking string on several lines error"
+	"abc
+	def"
+}
