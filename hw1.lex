@@ -84,10 +84,13 @@ asciiTrailer    ({digit}{digit}{digit}{digit})
 {digit}+.{digit}+{E}?		showToken("NUMBER");
 {digit}+{E}?          			showToken("NUMBER");
 
+
 {whitespace}				;
 true                showToken("TRUE");
 false                showToken("FALSE");
 null                showToken("NULL");
+
+<<EOF>>		{showToken("EOF"); exit(0);}
 .		            printErr();
 
 %%
