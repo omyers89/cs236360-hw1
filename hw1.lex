@@ -89,8 +89,7 @@ asciiTrailer    ({digit}{digit}{digit}{digit})
 true                showToken("TRUE");
 false                showToken("FALSE");
 null                showToken("NULL");
-
-<<EOF>>		{showToken("EOF"); exit(0);}
+<<EOF>>		{showToken("EOF"); exit(1);}
 .		            printErr();
 
 %%
