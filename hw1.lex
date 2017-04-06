@@ -43,7 +43,7 @@ hexTrailer      ({digit}|{hexLetter})({digit}|{hexLetter})({digit}|{hexLetter})(
                                     *s++ = res[i];
                                 free(res);
                               }
-<STRING>\\[^bfrntu]     { printEscapeErr("Undefined escape sequence"); }
+<STRING>\\[^bfrnt]     { printEscapeErr("Undefined escape sequence"); }
 
 <STRING>\"      { 
                   *s = 0;
