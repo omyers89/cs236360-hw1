@@ -30,7 +30,7 @@ hexTrailer4     ({hexDigit}){4}
 %%
 \"                          { BEGIN STRING; s = buf; }
 <STRING>\\\"                 { *s++ = '\"'; }
-<STRING>\\\                  { *s++ = '\\'; }
+<STRING>\\\\                  { *s++ = '\\'; }
 <STRING>\\b                  { *s++ = '\b'; }
 <STRING>\\f                  { *s++ = '\f'; }
 <STRING>\\r                  { *s++ = '\r'; }
