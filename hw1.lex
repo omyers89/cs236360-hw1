@@ -75,14 +75,13 @@ hexTrailer      ({digit}|{hexLetter})({digit}|{hexLetter})({digit}|{hexLetter})(
 <BK_COMM>.    { *s++ = *yytext; }
 
 
-\{                           showToken("OBJ_START");
-\}                           showToken("OBJ_END");
-\[                           showToken("ARR_START");
-\]                           showToken("ARR_END");
-:                           showToken("COLON");
-,                           showToken("COMMA");
-{digit}+.{digit}+{E}?		showToken("NUMBER");
-{digit}+{E}?          			showToken("NUMBER");
+\{                                                  showToken("OBJ_START");
+\}                                                   showToken("OBJ_END");
+\[                                                   showToken("ARR_START");
+\]                                                     showToken("ARR_END");
+:                                                    showToken("COLON");
+,                                                   showToken("COMMA");
+[-+]?{digit}*\.?{digit}+([eE][-+]?{digit}+)?        showToken("NUMBER");
 
 
 {whitespace}				;
