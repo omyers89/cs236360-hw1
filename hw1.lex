@@ -62,18 +62,8 @@ hexTrailer4     ({hexDigit}){4}
                 }
 <LN_COMM>.    { *s++ = *yytext; }
 
-\/\*            { BEGIN BK_COMM; s = buf; *s++ = '/'; *s++='*';}
-<BK_COMM>\*\/      { 
-                    
-                    *s++='*';
-                  *s++ = '/';
-                  *s = 0;
-                  BEGIN 0;
-                  printf("%d %s %s\n", yylineno, "BK_COMMENT", buf);
-                }
-
-<BK_COMM><<EOF>>    { printf("Error unclosed block comment\n"); exit(0);}
-<BK_COMM>.    { *s++ = *yytext; }
+[/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]     {printf("%d %s %s\n", yylineno, "BK_COMMENT", yytext);}
+[/][*]                                  {printf("Error unclosed block comment\n"); exit(0); }
 
 \{                           showToken("OBJ_START");
 \}                           showToken("OBJ_END");
