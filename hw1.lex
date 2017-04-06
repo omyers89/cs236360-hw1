@@ -26,9 +26,6 @@ hexLetter       ([a-fA-F])
 whitespace		([\t\n ])
 hexDigit   ({digit}|{hexLetter})
 hexTrailer4     ({hexDigit}){4}
-hexTrailer1     ({hexDigit})
-hexTrailer2     ({hexDigit}){2}
-hexTrailer3     ({hexDigit}){3}
 
 %%
 \"                          { BEGIN STRING; s = buf; }
@@ -47,7 +44,7 @@ hexTrailer3     ({hexDigit}){3}
                                 free(res);
                               }
 <STRING>\\\/                   { *s++ = '/'; }			  
-<STRING>\\[^bfrnt\\/]     { printEscapeErr("Undefined escape sequence"); }
+<STRING>\\[^bfrnt]     { printEscapeErr("Undefined escape sequence"); }
 
 <STRING>\"      { 
                   *s = 0;
