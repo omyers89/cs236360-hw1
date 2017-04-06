@@ -24,8 +24,11 @@ digit   		([0-9])
 letter  		([a-zA-Z])
 hexLetter       ([a-fA-F])
 whitespace		([\t\n ])
-asciiTrailer    ({digit}{digit}{digit}{digit})
-hexTrailer      ({digit}|{hexLetter})({digit}|{hexLetter})({digit}|{hexLetter})({digit}|{hexLetter})
+hexDigit   ({digit}|{hexLetter})
+hexTrailer4     ({hexDigit}){4}
+hexTrailer1     ({hexDigit})
+hexTrailer2     ({hexDigit}){2}
+hexTrailer3     ({hexDigit}){3}
 
 %%
 \"                          { BEGIN STRING; s = buf; }
@@ -36,7 +39,7 @@ hexTrailer      ({digit}|{hexLetter})({digit}|{hexLetter})({digit}|{hexLetter})(
 <STRING>\\r                  { *s++ = '\r'; }
 <STRING>\\n                  { *s++ = '\n'; }
 <STRING>\\t                   { *s++ = '\t'; }
-<STRING>\\u{hexTrailer}     {
+<STRING>\\u{hexTrailer4}    {
                                 char* res = handleUnicode();
                                 int i;
                                 for(i=0;i<strlen(res);i++)
@@ -44,7 +47,7 @@ hexTrailer      ({digit}|{hexLetter})({digit}|{hexLetter})({digit}|{hexLetter})(
                                 free(res);
                               }
 <STRING>\\\/                   { *s++ = '/'; }			  
-<STRING>\\[^bfrntu\\/]     { printEscapeErr("Undefined escape sequence"); }
+<STRING>\\[^bfrnt\\/]     { printEscapeErr("Undefined escape sequence"); }
 
 <STRING>\"      { 
                   *s = 0;
@@ -72,10 +75,8 @@ hexTrailer      ({digit}|{hexLetter})({digit}|{hexLetter})({digit}|{hexLetter})(
                   printf("%d %s %s\n", yylineno, "BK_COMMENT", buf);
                 }
 
-<BK_COMM>"EOF"    { printf("Error unclosed block comment\n"); exit(0);}
 <BK_COMM><<EOF>>    { printf("Error unclosed block comment\n"); exit(0);}
 <BK_COMM>.    { *s++ = *yytext; }
-
 
 \{                           showToken("OBJ_START");
 \}                           showToken("OBJ_END");
@@ -84,12 +85,6 @@ hexTrailer      ({digit}|{hexLetter})({digit}|{hexLetter})({digit}|{hexLetter})(
 :                           showToken("COLON");
 ,                           showToken("COMMA");
 
-\{                                                  showToken("OBJ_START");
-\}                                                   showToken("OBJ_END");
-\[                                                   showToken("ARR_START");
-\]                                                     showToken("ARR_END");
-:                                                    showToken("COLON");
-,                                                   showToken("COMMA");
 [-+]?{digit}*\.?{digit}+([eE][-+]?{digit}+)?        showToken("NUMBER");
 
 
@@ -105,19 +100,6 @@ null                showToken("NULL");
 void showToken(char * name)
 {
         printf("%d %s %s\n", yylineno, name, yytext);
-}
-
-//not used
-void showString()
-{
-    
-    yylval = strdup(yytext+1);
-    if (yylval[yyleng-2] != '"')
-       printf("improperly terminated string");
-    else
-        yylval[yyleng-2] = 0;
-    printf("%d %s %s\n", yylineno, "STRING", yylval);
-    //printf("found '%s'\n", yylval);
 }
 
 void printEscapeErr(char * name){
@@ -142,11 +124,3 @@ char* handleUnicode(){
 
     return buffer;
 }
-
-
-
-/* \"[^"\n]*["\n]          showString(); */
-/* doing nothing */
-/*{digit}+.{digit}+          			showToken("NUMBER");
-{digit}+          			showToken("NUMBER");
-*/
