@@ -44,7 +44,7 @@ hexTrailer4     ({hexDigit}){4}
                                 free(res);
                               }
 <STRING>\\\/                   { *s++ = '/'; }			  
-<STRING>\\[^bfrnt]     { printEscapeErr("Undefined escape sequence"); }
+<STRING>\\[^bfrnt]     { printEscapeErr("undefined escape sequence"); }
 
 <STRING>\"      { 
                   *s = 0;
