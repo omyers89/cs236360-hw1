@@ -51,9 +51,9 @@ hexTrailer4     ({hexDigit}){4}
                   BEGIN 0;
                   printf("%d %s %s\n", yylineno, "STRING", buf);
                 }
-<STRING>\n      { printErr(); exit(0);}
-<STRING><<EOF>> { printf("Error unclosed string\n"); exit(0);}
 
+<STRING><<EOF>> { printf("Error unclosed string\n"); exit(0);}
+<STRING>\n      { printErr(); exit(0);}
 
 <STRING>.       { *s++ = *yytext; }
 
